@@ -65,7 +65,7 @@ exports.tagFactory = function(testDefinitionsByKey) {
 exports.defaultTests = function() {
   var keys = {
     F: "is not a function -> typeof arg !== 'function'",
-    O: "is not an object -> !arg || typeof arg !== 'object'",
+    O: "is not an object -> !(arg instanceof Object)",
     N: "is not a number -> typeof arg !== 'number'",
     S: "is not a string -> typeof arg !== 'string'",
     A: 'is not an Array -> !Array.isArray(arg)',

@@ -4,6 +4,7 @@
   "description": "Minimalistic pure JavaScript function contracts.",
   "main": "index.js",
   "scripts": {
+    "coverage": "istanbul cover _mocha --",
     "test": "mocha -t 100s"
   },
   "repository": {
