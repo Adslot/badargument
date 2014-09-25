@@ -1,0 +1,39 @@
+{
+  "name": "badargument",
+  "version": "0.0.1",
+  "description": "Minimalistic pure JavaScript function contracts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -t 100s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xarvh/bad-argument.git"
+  },
+  "keywords": [
+    "arguments",
+    "function contract",
+    "test"
+  ],
+  "author": {
+    "name": "Francesco Orsenigo",
+    "email": "francesco.orsenigo@gmail.com",
+    "url": "http://github.com/xarvh"
+  },
+  "contributors": [
+    {
+      "name": "Tristan Straub",
+      "email": "tristan@straub.id.au"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "should": "~4.0.4",
+    "mocha": "~1.21.4"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/xarvh/bad-argument/issues"
+  },
+  "homepage": "https://github.com/xarvh/bad-argument"
+}

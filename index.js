@@ -5,28 +5,19 @@ evalInSmallestLocalScope = function(condition) {
 };
 
 
-//-----------------------------------------------
-
-// ?????
-// http://j-query.blogspot.com.au/2014/03/custom-error-objects-in-javascript.html
-
-exports.ContractError = function ContractError(index, keyMessage, caller) {
-  var args = JSON.stringify(Array.prototype.slice.call(caller["arguments"]));
+// TODO: Still not sold on thhis way of creating a custom Error
+// TODO: Stringifying `arguments` can produce a very long `error.message`. Is this ok?
+function BadArgumentError(index, keyMessage, caller) {
+  Error.captureStackTrace(this);
+  var args = JSON.stringify(Array.prototype.slice.call(caller.arguments));
   this.message = "arg " + index + " of " + (caller.name || 'function') + " " + keyMessage + ". Arguments: " + args;
 }
-
-//for (var key in Error) { ContractError[key] = Error[key]; }
-
-function ctor() { this.constructor = ContractError; }
-ctor.prototype = Error.prototype;
-ContractError.prototype = new ctor();
-
-ContractError.prototype.name = 'ContractError';
-
-//-----------------------------------------------
+BadArgumentError.prototype = Object.create(Error.prototype);
+BadArgumentError.prototype.name = "BadArgumentError";
+exports.BadArgumentError = BadArgumentError
 
 
-
+// Transform an arguments string definition into a test function
 var makeTestFunction = function(testsString, testsByKey) {
 
   var testsCode = testsString.split(' ').map(function(key, index) {
@@ -35,8 +26,8 @@ var makeTestFunction = function(testsString, testsByKey) {
     if (!test) {throw new Error("Invalid key " + key + " from " + testsString);}
     if (test.condition === "false") {return "";}
 
-    jsExpression = test.condition.replace(/[^a-zA-Z0-9]arg[^a-zA-Z0-9]/g, " (args[" + index + "]) ");
-    return " if(" + jsExpression + ") {throw new ContractError(" + index + ", '" + test.message + "', caller)};";
+    jsExpression = test.condition.replace(/(^|[^a-zA-Z0-9$_])arg([^a-zA-Z0-9$_]|$)/g, "$1(args[" + index + "])$2");
+    return " if(" + jsExpression + ") {throw new BadArgumentError(" + index + ", '" + test.message + "', caller)};";
   });
 
   return eval("(function(caller) { var args = caller.arguments;\n" + (testsCode.join('\n')) + "\n})");
@@ -74,10 +65,10 @@ exports.tagFactory = function(testDefinitionsByKey) {
 exports.defaultTests = function() {
   var keys = {
     F: "is not a function -> typeof arg !== 'function'",
-    O: "is not an object -> typeof arg !== 'object'",
+    O: "is not an object -> !arg || typeof arg !== 'object'",
     N: "is not a number -> typeof arg !== 'number'",
     S: "is not a string -> typeof arg !== 'string'",
-    A: 'is not an Array -> Array.isArray(arg)',
+    A: 'is not an Array -> !Array.isArray(arg)',
     t: 'is falsy -> !arg',
     '*': 'must be defined -> arg == null',
     _: 'ignore the argument -> false'
