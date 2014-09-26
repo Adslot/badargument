@@ -10,7 +10,7 @@ Built for speed.
 var tag = require('badargument')
 
 
-function myImportantFunction(aVeryImportantArgument, thisIsNotImportantReally, thisMustBeAFunction) {
+function importantFunction(veryImportant, notImportant, thisMustBeAFunction) {
   tag 'defined ignore function';
 
   whooohooo.some(code);
