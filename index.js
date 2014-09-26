@@ -16,7 +16,7 @@ BadArgumentError.prototype = Object.create(Error.prototype);
 BadArgumentError.prototype.name = 'BadArgumentError';
 
 
-// Transform an arguments string definition into a test function
+// Transform a string that describes the argument requirements into a function that actually runs the tests
 function makeTestFunction(testsString, testsByKey) {
 
   var testsCode = testsString.split(' ').map(function(key, index) {
