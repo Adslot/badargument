@@ -7,12 +7,11 @@ describe('badargument', function() {
 
   // should correctly replace arg no matter what's around
 
-  describe('tag', function() {
+  describe('default tag', function() {
 
     describe('with named functions', function() {
-      var tag = badargument.tag
       function namedFunction(a, b, c, d, e, f, g) {
-        tag('F _ * A N t')
+        badargument('function ignore defined array number truthy')
         return 'ok'
       }
 
@@ -31,9 +30,8 @@ describe('badargument', function() {
     })
 
     describe('with anonymous functions', function() {
-      var tag = badargument.tag
       anonymousFunction = function(a, b, c, d, e, f, g) {
-        tag('_ S O')
+        badargument('_ S O')
         return 'kk'
       }
 

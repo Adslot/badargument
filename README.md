@@ -1,14 +1,17 @@
 Bad Argument JS
 ===============
 
-Minimalistic pure JavaScript function contracts.
+Terse, pure JavaScript function argument type checker.
+Implements contract pre-conditions for functions.
+Built for speed.
+
 
 ```javascript
-var tag = require('badargument').tag
+var tag = require('badargument')
 
 
 function myImportantFunction(aVeryImportantArgument, thisIsNotImportantReally, thisMustBeAFunction) {
-  tag '* _ F';
+  tag 'defined ignore function';
 
   whooohooo.some(code);
 }
@@ -21,17 +24,22 @@ Throws:
 BadArgumentError: arg 2 of myImportantFunction is not a function. Arguments: ["anyNonNullGoes",null,"thisInsteadShouldBeAFunction"]
 ```
 
+Bad Argument uses [Function.caller](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/caller)
+and will degrade gracefully if it is not available.
+
 
 Default error conditions
 ------------------------
- * `F`: `typeof arg !== 'function'`
- * `O`: `typeof arg !== 'object'`
- * `N`: `typeof arg !== 'number'`
- * `S`: `typeof arg !== 'string'`
- * `A`: `!Array.isArray(arg)`
- * `t`: `!arg`
- * `*`: `arg == null`
- * `_`: ignore the argument
+ * `function` or `F`: `typeof arg !== "function"`
+ * `object` or `O`: `!(arg instanceof Object)`
+ * `number` or `N`: `typeof arg !== "number"`
+ * `string` or `S`: `typeof arg === "string" || arg instanceof String`
+ * `array` or `A`: `!Array.isArray(arg)`
+ * `truthy` or `t`: `!arg`
+ * `defined` or `*`: `arg == null`
+ * `ignore` or `_`: `false`
+
+As a guideline, single-char versions of conditions that test for type are uppercase letters.
 
 
 Custom error conditions
@@ -39,14 +47,14 @@ Custom error conditions
 ```javascript
 var badargument = require 'badargument'
 
-var myTag = badargument.tagFactory badargument.defaultTests({
-  E: 'is not even -> arg % 2 !== 0'
+var myTag = badargument.factory badargument.defaultTests({
+  e: 'is not even -> arg % 2 !== 0'
   red: 'is not red -> !arg || arg.color !== "red"'
 });
 
 
-function eat(howMany, appleType, where, otherStuffWeDontCareAbout) {
-  myTag 'E red S'
+function eat(howMany, appleType, where, callback) {
+  myTag 'e red string function'
 }
 
 var apple = {color: 'blue'}
