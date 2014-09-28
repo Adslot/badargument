@@ -20,10 +20,13 @@ function makeTestFunction(testsString, testsByKey) {
   var testsCode = testsString.split(' ').map(function(key, index) {
 
     var test = testsByKey[key]
-    if (!test) {throw new Error('Invalid key ' + key + ' from ' + testsString);}
+    if (!test) {throw new Error('Invalid key "' + key + '" from "' + testsString + '"');}
     if (test.condition === 'false') {return '';}
 
-    jsExpression = test.condition.replace(/(^|[^a-zA-Z0-9$_])arg([^a-zA-Z0-9$_]|$)/g, '$1(args[' + index + '])$2');
+    var jsExpression = (typeof test.condition === 'function') ?
+      ('testsByKey["' + key + '"].condition(args[' + index + '])') :
+      test.condition.replace(/(^|[^a-zA-Z0-9$_])arg([^a-zA-Z0-9$_]|$)/g, '$1(args[' + index + '])$2');
+
     return ' if(' + jsExpression + ') {throw new BadArgumentError(' + index + ', "' + test.message + '", caller)};';
   });
 
@@ -31,23 +34,29 @@ function makeTestFunction(testsString, testsByKey) {
 };
 
 
-function factory(testDefinitionsByKey) {
+function factory() {
 
   // `caller` is supported pretty much everywhere but is not standard.
   if (!('caller' in Function.prototype)) {return function() {};}
 
+  testDefinitionsByKey = {}
+
+  for (var index = 0; index < arguments.length; index++) {
+    var arg = arguments[index];
+    for (var key in arg) testDefinitionsByKey[key] = arg[key];
+  };
+
+
   var keys = {};
   for (var key in testDefinitionsByKey) {
-    var definition = testDefinitionsByKey[key];
 
-    var split = definition.split('->');
-    keys[key] = {
-      message: split[0].trim(),
-      condition: split[1].trim()
-    };
+    var definition = testDefinitionsByKey[key]
+    keys[key] = {message: definition.message, condition: definition.condition};
 
-    try { evalInSmallestLocalScope(keys[key].condition); } catch (error) {
-      throw new Error('Cannot eval() condition in "' + definition + '": ' + error.message);
+    if (typeof definition.condition !== 'function') {
+      try { evalInSmallestLocalScope(keys[key].condition); } catch (error) {
+        throw new Error('Cannot eval() condition in "' + definition.condition + '": ' + error.message);
+      }
     }
   }
 
@@ -61,16 +70,16 @@ function factory(testDefinitionsByKey) {
 
 function defaultTests() {
 
-  var ff = 'is not a function -> typeof arg !== "function"';
-  var oo = 'is not an object -> !(arg instanceof Object)';
-  var nn = 'is not a number -> typeof arg !== "number"';
-  var ss = 'is not a string -> typeof arg !== "string" && !(arg instanceof String)';
-  var aa = 'is not an Array -> !Array.isArray(arg)';
-  var tt = 'is falsy -> !arg';
-  var dd = 'must be defined -> arg == null';
-  var ii = 'ignore the argument -> false';
+  var ff = {message: 'is not a function', condition: 'typeof arg !== "function"'};
+  var oo = {message: 'is not an object', condition: '!(arg instanceof Object)'};
+  var nn = {message: 'is not a number', condition: 'typeof arg !== "number"'};
+  var ss = {message: 'is not a string', condition: 'typeof arg !== "string" && !(arg instanceof String)'};
+  var aa = {message: 'is not an Array', condition: '!Array.isArray(arg)'};
+  var tt = {message: 'is falsy', condition: '!arg'};
+  var dd = {message: 'must be defined', condition: 'arg == null'};
+  var ii = {message: 'ignore the argument', condition: 'false'};
 
-  var keys = {
+  return {
     function: ff, F: ff,
     object: oo, O: oo,
     number: nn, N: nn,
@@ -81,12 +90,6 @@ function defaultTests() {
     ignore: ii, _: ii
   };
 
-  for (var index = 0; index < arguments.length; index++) {
-    var arg = arguments[index];
-    for (var key in arg) keys[key] = arg[key];
-  };
-
-  return keys;
 };
 
 

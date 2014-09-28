@@ -49,8 +49,8 @@ Custom error conditions
 var badargument = require 'badargument'
 
 var myTag = badargument.factory badargument.defaultTests({
-  e: 'is not even -> arg % 2 !== 0'
-  red: 'is not red -> !arg || arg.color !== "red"'
+  e: {message: 'is not even', condition: 'arg % 2 !== 0'},
+  red: {message: 'is not red', '!arg || arg.color !== "red"'}
 });
 
 
@@ -66,6 +66,6 @@ Will throw `BadArgumentError: arg 1 of eat is not red.
 
 TODO
 ----
-* Change custom condition syntax to allow both strings and custom functions
 * Add tests for `arguments` attribute
+* Add tests for custom function conditions
 * Increase coverage

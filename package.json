@@ -1,6 +1,6 @@
 {
   "name": "badargument",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Minimalistic pure JavaScript function contracts.",
   "main": "index.js",
   "scripts": {
