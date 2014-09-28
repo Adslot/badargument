@@ -5,9 +5,13 @@ var badargument = require('./index');
 
 describe('badargument', function() {
 
-  // should correctly replace arg no matter what's around
-
   describe('default tag', function() {
+
+    it('should complain about invalid keys', function() {
+      function invalidKeys() { badargument('function lolIamInvalid') }
+      invalidKeys.should.throw(/lolIamInvalid/)
+    })
+
 
     describe('with named functions', function() {
       function namedFunction(a, b, c, d, e, f, g) {
@@ -50,5 +54,43 @@ describe('badargument', function() {
     })
 
   })
-})
 
+
+  describe('custom tags', function() {
+
+    function Banana() {}
+    var customTag = badargument.factory(badargument.defaultTests(), {
+      banana: {message: 'is not a banana', condition: function(arg) {return !(arg instanceof Banana)}},
+      huzzah: {message: 'NO HUZZA!', condition: '!arg || !arg.huzza'}
+    })
+    function withCustomTag() {customTag('string banana huzzah')}
+
+    it('should accept valid custom keys', function() {
+      withCustomTag('', new Banana, {huzza: 'woot!'})
+    })
+
+    it('should reject by custom function condition', function() {
+      var f = withCustomTag.bind(null, '', {}, {huzza: 'woot!'})
+      f.should.throw(badargument.BadArgumentError)
+      f.should.throw(/is not a banana/)
+    })
+
+    it('should reject by snipper condition', function() {
+      var f = withCustomTag.bind(null, '', new Banana, {})
+      f.should.throw(badargument.BadArgumentError)
+      f.should.throw(/NO HUZZA/)
+    })
+
+    it('should reject invalid conditions', function() {
+      badargument.factory.bind(null, badargument.defaultTests(), {
+        huzzah: {message: 'NO HUZZA!', condition: '(!arg || !arg.huzza'}
+      }).should.throw(/Cannot eval/)
+    })
+
+    it('should reject brittle conditions', function() {
+      badargument.factory.bind(null, badargument.defaultTests(), {
+        huzzah: {message: 'NO HUZZA!', condition: '!arg.huzza'}
+      }).should.throw(/Cannot eval/)
+    })
+  })
+})

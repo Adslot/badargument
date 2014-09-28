@@ -94,6 +94,6 @@ function defaultTests() {
 
 
 module.exports = factory(defaultTests());
-exports.BadArgumentError = BadArgumentError
-exports.factory = factory
-exports.defaultTests = defaultTests
+module.exports.BadArgumentError = BadArgumentError
+module.exports.factory = factory
+module.exports.defaultTests = defaultTests

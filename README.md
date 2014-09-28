@@ -67,5 +67,5 @@ Will throw `BadArgumentError: arg 1 of eat is not red.
 TODO
 ----
 * Add tests for `arguments` attribute
-* Add tests for custom function conditions
-* Increase coverage
+* Add tests for graceful degradation
+* Add documentation for function conditions
