@@ -87,7 +87,7 @@ function defaultTests() {
     array: aa, A: aa,
     truthy: tt, t: tt,
     defined: dd, '*': dd,
-    ignore: ii, _: ii
+    ignored: ii, _: ii
   };
 
 };

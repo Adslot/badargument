@@ -7,11 +7,11 @@ Built for speed.
 
 
 ```javascript
-var tag = require('badargument')
+var argsMustBe = require('badargument');
 
 
 function importantFunction(veryImportant, notImportant, thisMustBeAFunction) {
-  tag 'defined ignore function';
+  argsMustBe('defined ignored function');
 
   whooohooo.some(code);
 }
@@ -26,7 +26,7 @@ BadArgumentError: arg 2 of myImportantFunction is not a function.
 Call arguments will also be stored in the Error's `.arguments` attribute.
 
 Bad Argument uses [Function.caller](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/caller)
-and will degrade gracefully if it is not available.
+and will degrade gracefully if it is not available [citation needed]().
 
 
 Default error conditions
@@ -38,7 +38,7 @@ Default error conditions
  * `array` or `A`: `!Array.isArray(arg)`
  * `truthy` or `t`: `!arg`
  * `defined` or `*`: `arg == null`
- * `ignore` or `_`: `false`
+ * `ignored` or `_`: `false`
 
 As a guideline, single-char versions of conditions that test for type are uppercase letters.
 
@@ -46,22 +46,26 @@ As a guideline, single-char versions of conditions that test for type are upperc
 Custom error conditions
 -----------------------
 ```javascript
-var badargument = require 'badargument'
+var badargument = require('badargument');
+function Banana(){}
 
-var myTag = badargument.factory badargument.defaultTests({
-  e: {message: 'is not even', condition: 'arg % 2 !== 0'},
-  red: {message: 'is not red', '!arg || arg.color !== "red"'}
-});
+var myArgsMustBe = badargument.factory(
+  badargument.defaultTests(),
+  {
+    B: {message: 'is not a banana', condition: function(arg) {return !(arg instanceof Banana)}},
+    red: {message: 'is not red', condition: '!arg || arg.color !== "red"'}
+  }
+);
 
 
-function eat(howMany, appleType, where, callback) {
-  myTag 'e red string function'
+function picnic(howMany, appleType, where, callback) {
+  myArgsMustBe('B red string function');
 }
 
-var apple = {color: 'blue'}
-eat(4, apple, 'on the moon');
+var apple = {color: 'blue'};
+picnic(new Banana, apple, 'on the moon');
 ```
-Will throw `BadArgumentError: arg 1 of eat is not red.
+Will throw `BadArgumentError: arg 1 of picnic is not red.`
 
 
 TODO

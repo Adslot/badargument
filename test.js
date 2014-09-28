@@ -15,7 +15,7 @@ describe('badargument', function() {
 
     describe('with named functions', function() {
       function namedFunction(a, b, c, d, e, f, g) {
-        badargument('function ignore defined array number truthy')
+        badargument('function ignored defined array number truthy')
         return 'ok'
       }
 
