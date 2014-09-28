@@ -25,7 +25,7 @@ describe('badargument', function() {
         for (var i = 0; i < 3; i++)
           f.should.throw(badargument.BadArgumentError)
         for (var i = 0; i < 3; i++)
-          f.should.throw('arg 2 of namedFunction must be defined. Arguments: [null,null,null,[],0,1]')
+          f.should.throw('arg 2 of namedFunction must be defined.')
       })
     })
 
@@ -45,7 +45,7 @@ describe('badargument', function() {
         for (var i = 0; i < 3; i++)
           f.should.throw(badargument.BadArgumentError)
         for (var i = 0; i < 3; i++)
-          f.should.throw('arg 2 of function is not an object. Arguments: ["","",null,{}]')
+          f.should.throw('arg 2 of function is not an object.')
       })
     })
 

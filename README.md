@@ -21,8 +21,9 @@ myImportantFunction('anyNonNullGoes', null, 'thisInsteadShouldBeAFunction');
 
 Throws:
 ```
-BadArgumentError: arg 2 of myImportantFunction is not a function. Arguments: ["anyNonNullGoes",null,"thisInsteadShouldBeAFunction"]
+BadArgumentError: arg 2 of myImportantFunction is not a function.
 ```
+Call arguments will also be stored in the Error's `.arguments` attribute.
 
 Bad Argument uses [Function.caller](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/caller)
 and will degrade gracefully if it is not available.
@@ -60,9 +61,11 @@ function eat(howMany, appleType, where, callback) {
 var apple = {color: 'blue'}
 eat(4, apple, 'on the moon');
 ```
-Will throw `BadArgumentError: arg 1 of eat is not red. Arguments: [4,{"color":"blue"},"on the moon"]`
+Will throw `BadArgumentError: arg 1 of eat is not red.
 
 
 TODO
 ----
-How good is it to output the whole `JSON.stringify`cation of `arguments`?
+* Change custom condition syntax to allow both strings and custom functions
+* Add tests for `arguments` attribute
+* Increase coverage

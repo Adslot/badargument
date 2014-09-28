@@ -5,12 +5,10 @@ function evalInSmallestLocalScope(condition) {
 };
 
 
-// TODO: Still not sold on this way of creating a custom Error
-// TODO: Stringifying `arguments` can produce a very long `error.message`. Is this ok?
 function BadArgumentError(index, keyMessage, caller) {
   Error.captureStackTrace(this);
-  var args = JSON.stringify(Array.prototype.slice.call(caller.arguments));
-  this.message = 'arg ' + index + ' of ' + (caller.name || 'function') + ' ' + keyMessage + '. Arguments: ' + args;
+  this.message = 'arg ' + index + ' of ' + (caller.name || 'function') + ' ' + keyMessage + '.';
+  this.arguments = caller.arguments
 }
 BadArgumentError.prototype = Object.create(Error.prototype);
 BadArgumentError.prototype.name = 'BadArgumentError';
