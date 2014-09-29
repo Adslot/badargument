@@ -5,11 +5,23 @@ var badargument = require('./index');
 
 describe('badargument', function() {
 
+
   describe('default tag', function() {
 
     it('should complain about invalid keys', function() {
       function invalidKeys() { badargument('function lolIamInvalid') }
       invalidKeys.should.throw(/lolIamInvalid/)
+    })
+
+    it('should degrade gracefully if Function.caller is not available', function() {
+      var functionalTag = badargument.factory()
+
+      eval(badargument.factory.toString().replace(/'caller' in Function/, "'notHere' in Function"))
+      var degradedTag = factory()
+
+      var garble = 'garblegarble!!!!'
+      degradedTag.bind(null, garble)()
+      functionalTag.bind(null, garble).should.throw(Error)
     })
 
 
@@ -25,11 +37,15 @@ describe('badargument', function() {
       })
 
       it('should throw when arguments are bad', function() {
-        var f = namedFunction.bind(null, (function(){}), undefined, null, [], 0, 1)
+        function xyz(){}
+        var f = namedFunction.bind(null, xyz, undefined, null, [], 0, 1)
         for (var i = 0; i < 3; i++)
           f.should.throw(badargument.BadArgumentError)
         for (var i = 0; i < 3; i++)
           f.should.throw('arg 2 of namedFunction must be defined.')
+        try { f() } catch(error) {
+          error.arguments.should.eql([xyz, undefined, null, [], 0, 1])
+        }
       })
     })
 
@@ -50,9 +66,12 @@ describe('badargument', function() {
           f.should.throw(badargument.BadArgumentError)
         for (var i = 0; i < 3; i++)
           f.should.throw('arg 2 of function is not an object.')
+
+        try { f() } catch(error) {
+          error.arguments.should.eql(['', '', null, {}])
+        }
       })
     })
-
   })
 
 

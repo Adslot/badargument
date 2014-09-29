@@ -16,7 +16,7 @@ function importantFunction(veryImportant, notImportant, thisMustBeAFunction) {
   whooohooo.some(code);
 }
 
-myImportantFunction('anyNonNullGoes', null, 'thisInsteadShouldBeAFunction');
+importantFunction('anyNonNullGoes', null, 'thisInsteadShouldBeAFunction');
 ```
 
 Throws:
@@ -26,7 +26,7 @@ BadArgumentError: arg 2 of myImportantFunction is not a function.
 Call arguments will also be stored in the Error's `.arguments` attribute.
 
 Bad Argument uses [Function.caller](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/caller)
-and will degrade gracefully if it is not available [citation needed]().
+and will degrade gracefully if it is not available.
 
 
 Default error conditions
@@ -52,7 +52,10 @@ function Banana(){}
 var myArgsMustBe = badargument.factory(
   badargument.defaultTests(),
   {
+    // This is more powerful
     B: {message: 'is not a banana', condition: function(arg) {return !(arg instanceof Banana)}},
+
+    // This is faster because it gets inlined
     red: {message: 'is not red', condition: '!arg || arg.color !== "red"'}
   }
 );
@@ -66,10 +69,3 @@ var apple = {color: 'blue'};
 picnic(new Banana, apple, 'on the moon');
 ```
 Will throw `BadArgumentError: arg 1 of picnic is not red.`
-
-
-TODO
-----
-* Add tests for `arguments` attribute
-* Add tests for graceful degradation
-* Add documentation for function conditions
